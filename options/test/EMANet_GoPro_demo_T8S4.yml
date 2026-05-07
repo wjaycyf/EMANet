@@ -1,0 +1,72 @@
+# general settings
+name: EMANet_GoPro_demo_T8S4
+model_type: EMANetModel
+num_gpu: 1
+manual_seed: 10
+
+# dataset and data loader settings
+datasets:
+  val:
+    name: GoPro
+    type: AdobeGopro_test_Dataset
+
+    dataroot: 
+
+    # interpolation settings
+    num_skip_interpolation: 3 # m
+    num_inter_interpolation: 3 # n
+    moment_events: 7
+
+    # super-resolution settings
+    scale_min:  4
+    scale_max: 4
+
+    # gt_size / scale GoPro: 720*1280  Adobe240: 720*1280
+    lq_size:
+      - 180
+      - 320
+
+    io_backend:
+      type: disk
+
+
+# network structures
+network_g:
+  type: EMANetArch
+  event_channels: 2
+  channels: 3
+  n_feats: 64
+  front_RBs: 5
+  base_dim: 64
+  head: 8
+  r: 1
+  r_t: 1
+
+  # Event Residual Connection settings
+  use_event_residual: true
+  event_residual_sample_number: 8
+  event_residual_offset: 0.0125
+  event_residual_layers: 2
+
+  # Scale-Aware SMTP settings
+  use_scale_aware_smtp: true
+  scale_aware_mode: 'full'
+
+  # Motion-Adaptive Temporal Sampling settings
+  use_adaptive_temporal: true
+  adaptive_sampler_type: 'density'
+  r_t_min: 1
+  r_t_max: 2
+
+
+# path
+path:
+  pretrain_network_g: pretrained_models/EMANet/net_g_latest.pth
+  strict_load_g: true
+
+val:
+  # val_step: 1
+  save_img: true
+  save_gt: false
+  cal_metrics: true
+
